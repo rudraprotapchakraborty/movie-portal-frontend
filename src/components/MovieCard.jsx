@@ -1,74 +1,116 @@
-import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Clapperboard, Heart, Star } from "lucide-react";
+import { useFavorites } from "../context/FavoritesContext";
 
-const Movie = ({ movie, loadedMovies, setLoadedMovies }) => {
-  const { _id, title, release, genre, rating, summary, poster } = movie;
-
-  const handleDelete = (_id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`https://movie-portal-server-two-pink.vercel.app/movie/${_id}`, {
-          method: 'DELETE',
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.deletedCount) {
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success",
-              });
-
-              // Update the loaded movies state
-              const remainingMovies = loadedMovies.filter((movie) => movie._id !== _id);
-              setLoadedMovies(remainingMovies);
-            }
-          });
-      }
-    });
-  };
-
-  return (
-    <div className="card lg:w-72 w-full bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden transform transition-all duration-300 ease-in-out hover:scale-105 flex flex-col h-full">
-      <figure className="w-full h-48 overflow-hidden">
-        <img
-          src={poster}
-          alt="Movie Poster"
-          className="w-full h-full object-cover rounded-t-lg transition-transform duration-300 ease-in-out transform hover:scale-110"
-        />
-      </figure>
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="space-y-3">
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">{title || "N/A"}</p>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Release Year: <span className="font-normal">{release || "N/A"}</span></p>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Genre: <span className="font-normal">{genre || "N/A"}</span></p>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Summary: <span className="font-normal">{summary || "No summary available"}</span></p>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Rating: <span className="font-normal">{rating || "Not rated"}</span></p>
-        </div>
-        <div className="mt-3 flex space-x-3">
-          <Link to={`/movieDetails/${movie._id}`} className="w-full">
-            <button className="w-full py-2 text-sm font-medium text-white bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-all">
-              See Details
-            </button>
-          </Link>
-          <button
-            onClick={() => handleDelete(_id)}
-            className="w-full py-2 text-sm font-medium text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-all"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+export const GENRE_LABELS = {
+  action: "Action",
+  adventure: "Adventure",
+  animation: "Animation",
+  comedy: "Comedy",
+  crime: "Crime",
+  drama: "Drama",
+  fantasy: "Fantasy",
+  horror: "Horror",
+  romance: "Romance",
+  "sci-fi": "Sci-Fi",
+  thriller: "Thriller",
 };
 
-export default Movie;
+export const formatRuntime = (minutes) => `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, "0")}m`;
+
+/** Poster image with a title card shown when the picture is missing or fails to load. */
+export function Poster({ movie, className = "", eager = false }) {
+  const [failedUrl, setFailedUrl] = useState(null);
+  const failed = failedUrl === movie.poster;
+  return (
+    <div className={`relative aspect-[2/3] overflow-hidden bg-brand-soft ${className}`}>
+      {failed ? (
+        <div className="absolute inset-0 grid place-items-center gap-2 p-4 text-center text-muted">
+          <Clapperboard className="h-8 w-8 text-brand" />
+          <span className="text-sm font-semibold">{movie.title}</span>
+        </div>
+      ) : (
+        <img
+          src={movie.poster}
+          alt={`${movie.title} poster`}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => setFailedUrl(movie.poster)}
+          className="h-full w-full object-cover"
+        />
+      )}
+    </div>
+  );
+}
+
+export function FavoriteButton({ movie, className = "" }) {
+  const { isFavorite, toggle } = useFavorites();
+  const active = isFavorite(movie.id);
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggle(movie.id);
+      }}
+      aria-pressed={active}
+      aria-label={active ? `Remove ${movie.title} from favorites` : `Add ${movie.title} to favorites`}
+      className={`grid h-9 w-9 place-items-center rounded-full bg-paper/85 text-ink shadow backdrop-blur transition hover:scale-110 ${className}`}
+    >
+      <Heart className={`h-[18px] w-[18px] transition-colors ${active ? "fill-brand text-brand" : ""}`} />
+    </button>
+  );
+}
+
+export function RatingBadge({ rating, className = "" }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full bg-[var(--gold-soft)] px-2 py-0.5 text-xs font-bold text-gold ${className}`}>
+      <Star className="h-3 w-3 fill-current" /> {Number(rating).toFixed(1)}
+    </span>
+  );
+}
+
+export default function MovieCard({ movie, eager = false }) {
+  return (
+    <article className="group relative">
+      <Link to={`/movies/${movie.id}`} className="block rounded-2xl focus-visible:outline-offset-4">
+        <div className="relative overflow-hidden rounded-2xl border border-line shadow-[var(--shadow)] transition duration-300 group-hover:-translate-y-1.5 group-hover:border-brand group-hover:shadow-xl">
+          <Poster movie={movie} eager={eager} className="transition duration-500 group-hover:scale-[1.04]" />
+          <RatingBadge rating={movie.rating} className="absolute left-2.5 top-2.5 !bg-paper/90 backdrop-blur" />
+        </div>
+        <h3 className="mt-3 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-ink">{movie.title}</h3>
+        <p className="mt-0.5 text-xs font-medium text-muted">
+          {movie.release} · {GENRE_LABELS[movie.genre] ?? movie.genre}
+        </p>
+      </Link>
+      <FavoriteButton movie={movie} className="absolute right-2.5 top-2.5" />
+    </article>
+  );
+}
+
+export function MovieGridSkeleton({ count = 12 }) {
+  return (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6" role="status" aria-label="Loading movies">
+      {Array.from({ length: count }, (_, i) => (
+        <div key={i}>
+          <div className="skeleton aspect-[2/3] !rounded-2xl" />
+          <div className="skeleton mt-3 h-4 w-4/5" />
+          <div className="skeleton mt-2 h-3 w-2/5" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function MovieGrid({ movies, eagerCount = 6 }) {
+  return (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      {movies.map((m, i) => (
+        <MovieCard key={m.id} movie={m} eager={i < eagerCount} />
+      ))}
+    </div>
+  );
+}

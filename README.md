@@ -1,66 +1,50 @@
-# Movie Portal - Client
+# Movie Portal · Web app
 
-The frontend for the movie portal application. This dynamic, user-friendly interface allows users to explore movies, view their details, and manage their favorite movies seamlessly.
+Browse a catalogue of movies, keep a favorites list and add your own picks to the shelf.
 
----
-
-## Screenshot
-![Screenshot](/src/assets/screenshot.png)
-
----
+Backend repository: [movie-portal-backend](https://github.com/rudraprotapchakraborty/movie-portal-backend)
 
 ## Features
-- **Browse Movies:** Display a collection of movies retrieved from the backend API.
-- **View Movie Details:** Each movie has detailed information, including title, description, genre, release date, and more.
-- **Add to Favorites:** Users can add movies to their favorites list and view them later.
-- **Search and Filter:** Easily search for movies based on genres, release year, and keywords.
-- **Responsive Design:** Optimized for desktop, tablet, and mobile devices to ensure a smooth user experience.
 
----
+- 88 sample movies across Marvel, Star Wars, The Lord of the Rings, Harry Potter, Pixar, classics and more, with real titles, runtimes, release years, posters and synopses from Wikipedia
+- Search by title, filter by genre, sort (top rated, recently added, year, title) and paginate. The state lives in the address bar, so every view can be linked or reloaded
+- Movie details with rating, runtime, summary and a link to the source article
+- Favorites: tap the heart on any card. Saved to your account, never duplicated
+- Add movies with a live poster preview. Only the person who added a movie (or an admin) can edit or delete it
+- Email and password sign-in with a six digit email code, Google sign-in, forgot-password reset
+- Account settings: name, photo, email (confirmed by code), password, sign-in methods, delete account
+- Admin area: member list with search, block, role change and delete, plus site statistics
+- Newsletter sign-up, light and dark mode, responsive down to phones
+- Shared test accounts (Admin and User) on the sign-in page, locked so settings and the sample catalogue cannot be changed
+- Links from the first version of the site (`/allMovies`, `/addMovie`, `/movieDetails/:id`, `/updateMovie/:id`) still work
 
-## Tech Stack
-- **HTML**, **CSS**, **JavaScript**
-- **React.js** for component-based architecture
-- **Fetch API** for communication with the backend API
-- **Tailwind CSS** for responsive UI design
+## Stack
 
----
+React 19, Vite 8, Tailwind CSS 4, React Router 7, Axios, lucide-react.
 
-## Dependencies
-Ensure you have the following dependencies installed:
-- React (`react`, `react-dom`)
-- React Router (`react-router-dom`)
-- Tailwind CSS (`tailwindcss`)
-- Axios or Fetch API for API requests
+## Run it locally
 
-Install dependencies using:
+You need the [backend](https://github.com/rudraprotapchakraborty/movie-portal-backend) running on port 5000.
+
 ```bash
 npm install
+cp .env.example .env.local   # then fill in GOOGLE_CLIENT_ID
+npm run dev                  # http://localhost:3000
 ```
 
----
+In development the dev server proxies `/api` to `http://127.0.0.1:5000`.
 
-## How to Run the Project Locally
+## Environment
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/rudraprotapchakraborty/movie-portal-client.git
-   cd movie-portal-client
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Start the development server:**
-   ```bash
-   npm start
-   ```
-4. **Open in the browser:**
-   The application will be running at `http://localhost:3000`
+| Variable | Purpose |
+| --- | --- |
+| `GOOGLE_CLIENT_ID` | Public Google OAuth client id. The button is hidden when it is empty. |
+| `VITE_API_URL` | Optional override of the API origin including `/api`. |
 
----
+## Deploying
 
-## Live Project & Resources
-- **Live Project**: [https://movie-portal-c66f2.web.app/](https://movie-portal-c66f2.web.app/)
-- **Backend Repository**: [https://github.com/rudraprotapchakraborty/movie-portal-server](https://github.com/rudraprotapchakraborty/movie-portal-server)
----
+The project deploys as a static site (Vercel config included, with a rewrite to `index.html` for client side routing). Set `GOOGLE_CLIENT_ID` in the host's environment, and add the site's origin to the Google client's authorized JavaScript origins. The API origin is set in `src/lib/api.js` (or via `VITE_API_URL`), and the backend's `CLIENT_URL` must list this site's origin.
+
+## Credits
+
+Sample movie details come from Wikipedia and Wikidata. Posters belong to their respective studios and are shown to identify the films.
