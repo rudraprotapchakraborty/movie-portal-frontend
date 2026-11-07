@@ -1,10 +1,25 @@
-# Movie Portal · Web app
+<div align="center">
 
-Browse a catalogue of movies, keep a favorites list and add your own picks to the shelf.
+# 🎬 Movie Portal
 
-Live: [movie-portal-frontend-tau.vercel.app](https://movie-portal-frontend-tau.vercel.app/) (use a test account on the sign-in page)
+**Movie catalogue with search, genres, favorites and member-added movies.**
 
-Backend repository: [movie-portal-backend](https://github.com/rudraprotapchakraborty/movie-portal-backend)
+[**Live demo**](https://movie-portal-frontend-tau.vercel.app/) · [Backend API](https://github.com/rudraprotapchakraborty/movie-portal-backend) · [Portfolio](https://rudraprotapchakraborty.com/projects)
+
+![React](https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61dafb) ![Vite](https://img.shields.io/badge/Vite-646cff?style=for-the-badge&logo=vite&logoColor=ffffff) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-0f172a?style=for-the-badge&logo=tailwindcss&logoColor=38bdf8) ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=ffffff)
+
+<a href="https://movie-portal-frontend-tau.vercel.app/"><img src="https://i.ibb.co/fhbYrFV/movie-portal.webp" alt="Movie Portal: home page" width="880"></a>
+
+</div>
+
+> The web app of **Movie Portal**.
+>
+> - 88 titles with posters, runtimes and synopses from Wikipedia
+> - Search, genre filters, sorting and paging without an account
+> - Members save favourites and add their own movies
+> - Owners and admins can edit or delete what they added
+
+A movie catalogue with 88 titles across Marvel, Star Wars, The Lord of the Rings, Harry Potter, Pixar and many classics, with real titles, runtimes, release years, posters and synopses taken from Wikipedia. Visitors can search by title, filter by genre, sort and page through the shelf without signing in. Members save favorites with a heart, and add their own movies with a poster link and a rating, which only they (or an admin) can edit or delete. Sign-in works with email and password, confirmed with a one-time email code, or with Google, with password reset, an account settings page and an admin area for managing members. Shared test accounts for each role make it easy to try, and the interface supports light and dark themes.
 
 ## Features
 
@@ -50,3 +65,11 @@ The project deploys as a static site (Vercel config included, with a rewrite to 
 ## Credits
 
 Sample movie details come from Wikipedia and Wikidata. Posters belong to their respective studios and are shown to identify the films.
+
+---
+
+<div align="center">
+
+Made by **[Rudra Protap Chakraborty](https://rudraprotapchakraborty.com)** · [Portfolio](https://rudraprotapchakraborty.com) · [GitHub](https://github.com/rudraprotapchakraborty)
+
+</div>
