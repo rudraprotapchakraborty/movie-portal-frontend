@@ -38,14 +38,16 @@ export default function App() {
   const { pathname, hash } = useLocation();
   const bare = AUTH_PATHS.test(pathname); // auth screens bring their own header
 
-  // Fade sections in as they scroll into view
+  // Fade sections in as they scroll into view. Sections that only appear once their
+  // data has loaded (such as the genre list) are picked up as they are added to the page.
   useEffect(() => {
     document.documentElement.classList.add("js");
-    const items = document.querySelectorAll("[data-reveal]");
+    const pending = () => document.querySelectorAll("[data-reveal]:not(.in-view)");
     if (!("IntersectionObserver" in window)) {
-      items.forEach((el) => el.classList.add("in-view"));
+      pending().forEach((el) => el.classList.add("in-view"));
       return;
     }
+    const seen = new WeakSet();
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
@@ -56,8 +58,20 @@ export default function App() {
         }),
       { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
     );
-    items.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const watch = () =>
+      pending().forEach((el) => {
+        if (!seen.has(el)) {
+          seen.add(el);
+          io.observe(el);
+        }
+      });
+    watch();
+    const mo = new MutationObserver(watch);
+    mo.observe(document.getElementById("root"), { childList: true, subtree: true });
+    return () => {
+      mo.disconnect();
+      io.disconnect();
+    };
   }, [pathname]);
 
   // New pages start at the top; "/#about" style links scroll to their section
