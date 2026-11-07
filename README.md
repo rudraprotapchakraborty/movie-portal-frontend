@@ -2,6 +2,8 @@
 
 Browse a catalogue of movies, keep a favorites list and add your own picks to the shelf.
 
+Live: [movie-portal-frontend-tau.vercel.app](https://movie-portal-frontend-tau.vercel.app/) (use a test account on the sign-in page)
+
 Backend repository: [movie-portal-backend](https://github.com/rudraprotapchakraborty/movie-portal-backend)
 
 ## Features
@@ -39,11 +41,11 @@ In development the dev server proxies `/api` to `http://127.0.0.1:5000`.
 | Variable | Purpose |
 | --- | --- |
 | `GOOGLE_CLIENT_ID` | Public Google OAuth client id. The button is hidden when it is empty. |
-| `VITE_API_URL` | Optional override of the API origin including `/api`. |
+| `VITE_API_URL` | Optional override of the API origin including `/api`. Production defaults to `https://movie-portal-backend-chi.vercel.app/api`. |
 
 ## Deploying
 
-The project deploys as a static site (Vercel config included, with a rewrite to `index.html` for client side routing). Set `GOOGLE_CLIENT_ID` in the host's environment, and add the site's origin to the Google client's authorized JavaScript origins. The API origin is set in `src/lib/api.js` (or via `VITE_API_URL`), and the backend's `CLIENT_URL` must list this site's origin.
+The project deploys as a static site (Vercel config included, with a rewrite to `index.html` for client side routing). Set `GOOGLE_CLIENT_ID` in the host's environment, and add the site's origin to the Google client's authorized JavaScript origins. The API origin defaults to the deployed backend in `src/lib/api.js` (override with `VITE_API_URL`), and the backend's `CLIENT_URL` must list this site's origin.
 
 ## Credits
 
